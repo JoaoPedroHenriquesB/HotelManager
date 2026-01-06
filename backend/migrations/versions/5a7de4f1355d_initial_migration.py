@@ -1,8 +1,8 @@
-"""create rooms table
+"""initial migration
 
-Revision ID: 895599f15939
-Revises: 843a74607adb
-Create Date: 2026-01-05 19:11:17.885058
+Revision ID: 5a7de4f1355d
+Revises: 
+Create Date: 2026-01-06 11:30:00.458427
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '895599f15939'
-down_revision: Union[str, Sequence[str], None] = '843a74607adb'
+revision: str = '5a7de4f1355d'
+down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -24,9 +24,9 @@ def upgrade() -> None:
     op.create_table('rooms',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('room_number', sa.Integer(), nullable=False),
-    sa.Column('daily_value', sa.Float(), nullable=False),
-    sa.Column('room_type', sa.Enum('single', 'double', 'suit', native_enum=False), nullable=False),
-    sa.Column('status', sa.Enum('avaliable', 'unavailable', 'maintenance', native_enum=False), server_default=sa.text("'avaliable'"), nullable=False),
+    sa.Column('daily_price', sa.Float(), nullable=False),
+    sa.Column('room_type', sa.Enum('SINGLE', 'DOUBLE', 'SUIT', name='roomtype'), nullable=False),
+    sa.Column('status', sa.Enum('AVAILABLE', 'OCCUPIED', 'DIRTY', name='roomstatus'), server_default=sa.text("'avaliable'"), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('room_number')
     )

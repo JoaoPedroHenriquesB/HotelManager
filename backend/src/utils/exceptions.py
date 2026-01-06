@@ -12,6 +12,7 @@ class PermissionDeniedError(Exception):
 
 class UserNotFoundError(Exception):
     """raised when a user is not found in database"""
+    pass
 
 
 class DuplicateEntityError(Exception):
@@ -25,3 +26,12 @@ class DuplicateEntityError(Exception):
 
 class InternalDomainError(Exception):
     """generic domain-level internal error"""
+    pass
+
+class RoomNotAvaliableError(Exception):
+    """shows when a room is unavailable."""
+    pass
+
+class NotActiveStayError(Exception):
+    """"""
+    pass

@@ -33,7 +33,7 @@ class RoomRepository:
     return result.all()
 
   # GET ROOM BY ID
-  async def get_room_id(self, room_id):
+  async def get_by_id(self, room_id):
     return await self.session.scalar(select(RoomModel).where(RoomModel.id == room_id))
 
 

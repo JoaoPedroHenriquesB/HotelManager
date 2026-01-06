@@ -15,7 +15,7 @@ class RoomService:
 
     new_room = RoomModel(
       room_number=schema.room_number,
-      daily_value=schema.daily_value,
+      daily_price=schema.daily_price,
       room_type=schema.room_type
       )
 
@@ -34,13 +34,13 @@ class RoomService:
 
   # UPDATE ROOM
   async def update_room(self, schema, room_id):
-    db_room = await self.repository.get_room_id(room_id)
+    db_room = await self.repository.get_by_id(room_id)
 
     if not db_room:
       raise NotFoundError()
 
     db_room.room_number = schema.room_number
-    db_room.daily_value = schema.daily_value
+    db_room.daily_price = schema.daily_price
     db_room.room_type = schema.room_type
     db_room.status = schema.status
 
@@ -49,7 +49,7 @@ class RoomService:
 
   # DELETE ROOM
   async def delete_room(self, room_id):
-    db_room = await self.repository.get_room_id(room_id)
+    db_room = await self.repository.get_by_id(room_id)
 
     if not db_room:
       raise NotFoundError()

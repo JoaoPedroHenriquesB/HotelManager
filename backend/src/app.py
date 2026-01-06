@@ -1,11 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from src.routers.room_router import rm_router
+from src.routers.room_router import room_router
+from src.routers.guest_router import user_router
 from src.utils.exceptions import NotFoundError, PermissionDeniedError, InternalDomainError, DuplicateEntityError
 
 
 app = FastAPI(title="Hotel Manager")
-app.include_router(rm_router)
+
+app.include_router(user_router)
+app.include_router(room_router)
 
 @app.get("/")
 def health()-> dict:

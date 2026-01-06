@@ -1,13 +1,12 @@
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict
+from src.models.room_model import RoomStatus, RoomType
 
 
 class RoomSchema(BaseModel):
   room_number: int
-  daily_value: float
-  room_type: Literal["single", "double", "suit"]
-  status: Literal["avaliable", "unavailable", "maintenance"]
+  daily_price: float
+  room_type: RoomType
+  status: RoomStatus
 
 class RoomInternal(RoomSchema):
   id: int
