@@ -7,5 +7,9 @@ wheels/
 *.egg-info
 .environments
 .env
+
+#database
+.db
+database.db
 # Virtual environments
 .venv

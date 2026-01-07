@@ -36,7 +36,6 @@ def do_run_migrations(connection):
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
-        # Importante para SQLite: permite alterar tabelas recriando-as
         render_as_batch=True
     )
 

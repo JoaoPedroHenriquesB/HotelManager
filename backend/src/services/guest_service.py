@@ -21,7 +21,6 @@ class GuestService:
       name=schema.name,
       phone_number=schema.phone_number,
       cpf=schema.cpf,
-      room_number=schema.room_number
     )
 
     return await self.repository.create_guest(new_guest)
@@ -47,7 +46,6 @@ class GuestService:
     db_guest.name = schema.name
     db_guest.phone_number = schema.phone_number
     db_guest.cpf = schema.cpf
-    db_guest.room_number = schema.room_number
 
     return await self.repository.update_guest(db_guest)
 

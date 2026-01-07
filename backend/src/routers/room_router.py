@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db_config import get_session
 from src.models.room_model import RoomModel
 from src.schemas.room_schema import RoomInternal, RoomList, RoomSchema
-from src.services.room_services import RoomService
+from src.services.room_service import RoomService
+from src.utils.misc import FilterPage
 
 room_router = APIRouter(prefix="/room", tags=["Rooms"])
 
@@ -14,6 +15,7 @@ T_Session = Annotated[AsyncSession, Depends(get_session)]
 def room_service(session: T_Session) -> RoomService:
   return RoomService(session)
 
+T_FilterPage = Annotated[FilterPage, Query()]
 T_Service = Annotated[RoomService, Depends(room_service)]
 
 
@@ -25,8 +27,8 @@ async def create_room(service: T_Service, schema: RoomSchema) -> RoomModel:
 
 # GET ALL ROOMS
 @room_router.get("/list", response_model=RoomList)
-async def list_rooms(service: T_Service, limit: int, offset: int) -> dict:
-  rooms = await service.list_rooms(limit, offset)
+async def list_rooms(service: T_Service, filter_page: T_FilterPage) -> dict:
+  rooms = await service.list_rooms(filter_page.limit, filter_page.offset)
   return {"rooms": rooms}
 
 

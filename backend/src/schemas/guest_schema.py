@@ -5,14 +5,10 @@ class GuestSchema(BaseModel):
   name: str
   phone_number: str
   cpf: str
-  room_number: int
 
 
-class GuestPublic(BaseModel):
+class GuestPublic(GuestSchema):
   id: int
-  name: str
-  phone_number: str
-  room_number: int
 
   model_config = ConfigDict(from_attributes=True)
 

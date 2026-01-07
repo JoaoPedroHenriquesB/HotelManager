@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db_config import get_session
 from src.models.guest_model import GuestModel
 from src.schemas.guest_schema import GuestList, GuestPublic, GuestSchema
-from src.services.guest_services import GuestService
+from src.services.guest_service import GuestService
+from src.utils.misc import FilterPage
 
 user_router = APIRouter(prefix="/guest", tags=["Guests"])
 
@@ -14,6 +15,7 @@ T_Session = Annotated[AsyncSession, Depends(get_session)]
 def room_service(session: T_Session) -> GuestService:
   return GuestService(session)
 
+T_FilterPage = Annotated[FilterPage, Query()]
 T_Service = Annotated[GuestService, Depends(room_service)]
 
 
@@ -25,8 +27,8 @@ async def create_guest(service: T_Service, schema: GuestSchema) -> GuestModel:
 
 # LIST ALL GUESTS
 @user_router.get("/list", response_model=GuestList)
-async def list_guests(service: T_Service, limit: int, offset: int) -> dict:
-  guests = await service.list_guests(limit, offset)
+async def list_guests(service: T_Service, filter_page: T_FilterPage) -> dict:
+  guests = await service.list_guests(filter_page.limit, filter_page.offset)
   return {"guests": guests}
 
 

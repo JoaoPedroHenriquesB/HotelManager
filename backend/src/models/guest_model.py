@@ -8,5 +8,3 @@ class GuestModel(Base):
   name: Mapped[str]
   phone_number: Mapped[str]
   cpf: Mapped[str]
-
-  room_number: Mapped[int]
