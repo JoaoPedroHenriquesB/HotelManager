@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db_config import get_session
-from src.schemas.stay_schema import StaySchema, StayInternal, StayList
+from src.schemas.stay_schema import StaySchema, StayInternal, StayList, StayCheckout
 from src.services.stay_service import StayService
 from src.models.stay_model import StayModel
 from src.utils.misc import FilterPage
@@ -25,7 +25,7 @@ async def check_in(service: T_Service, schema: StaySchema) -> StayModel:
 
 
 # CHECK OUT
-@stay_router.get("/check_out")
+@stay_router.get("/check_out", response_model=StayCheckout)
 async def check_out(service: T_Service, guest_id: int) -> StayModel:
   return await service.check_out(guest_id)
 

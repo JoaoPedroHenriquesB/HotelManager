@@ -15,7 +15,7 @@ class StayRepository:
 
   # GET STAY BY ID
   async def get_by_id(self, guest_id: int):
-    return await self.session.scalar(select(StayModel).where(StayModel.guest_id == guest_id))
+    return await self.session.scalar(select(StayModel).where(StayModel.guest_id == guest_id, StayModel.status == StayStatus.ACTIVE))
 
 
 # ACTIVE STAY BY GUEST

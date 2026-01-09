@@ -1,3 +1,4 @@
+#from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.models.room_model import RoomStatus
 from src.models.stay_model import StayModel, StayStatus
@@ -41,7 +42,7 @@ class StayService:
 
   # CHECK OUT
   async def check_out(self, guest_id: int):
-    stay = await self.stay_repo.get_by_id(guest_id)
+    stay = await self.stay_repo.get_active_stay_by_guest_id(guest_id)
     if stay is None:
       raise NotFoundError()
 
@@ -51,6 +52,11 @@ class StayService:
 
     room.status = RoomStatus.AVAILABLE
     stay.status = StayStatus.FINISHED
+    #stay.check_out_date = datetime.now()
+
+    diff = stay.check_out_date - stay.check_in_date
+    days = max(1, diff.days)
+    stay.total_price = days * room.daily_price # type: ignore
 
     await self.room_repo.update_room(room)
     return await self.stay_repo.update_stay(stay)
@@ -64,6 +70,7 @@ class StayService:
       raise NotFoundError()
 
     return stays
+
 
   # LIST ALL ACTIVES STAYS
   async def actives_stays(self, limit: int, offset: int):
