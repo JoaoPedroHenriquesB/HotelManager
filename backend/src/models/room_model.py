@@ -2,6 +2,7 @@ from enum import Enum
 
 from sqlalchemy import text
 from sqlalchemy.orm import Mapped, mapped_column
+
 from src.database.db_config import Base
 
 

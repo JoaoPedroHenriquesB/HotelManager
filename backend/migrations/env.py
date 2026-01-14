@@ -3,13 +3,14 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import pool
-from sqlalchemy.ext.asyncio import create_async_engine  # Alterado para maior controle
+from sqlalchemy.ext.asyncio import create_async_engine
 from src.config.config import configs
 from src.database.db_config import table_registry
 
 from src.models.room_model import RoomModel  # noqa: F401
 from src.models.stay_model import StayModel  # noqa: F401
 from src.models.guest_model import GuestModel  # noqa: F401
+from src.models.user_model import UserModel # noqa: F401
 
 config = context.config
 

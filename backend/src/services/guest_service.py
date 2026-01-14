@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.models.guest_model import GuestModel
 from src.repositories.guest_repository import GuestRepository
-from src.utils.exceptions import DuplicateEntityError, NotFoundError
+from src.utils.exceptions import DuplicateEntityError, GuestNotFoundError
 
 
 class GuestService:
@@ -31,7 +31,7 @@ class GuestService:
     guests = await self.repository.get_guests(limit, offset)
 
     if not guests:
-      raise NotFoundError()
+      raise GuestNotFoundError()
 
     return guests
 
@@ -41,7 +41,7 @@ class GuestService:
     db_guest = await self.repository.get_by_id(guest_id)
 
     if not db_guest:
-      raise NotFoundError()
+      raise GuestNotFoundError()
 
     db_guest.name = schema.name
     db_guest.phone_number = schema.phone_number
@@ -55,6 +55,6 @@ class GuestService:
     db_guest = await self.repository.get_by_id(guest_id)
 
     if not db_guest:
-      raise NotFoundError()
+      raise GuestNotFoundError()
 
     return await self.repository.delete_guest(guest_id)

@@ -4,6 +4,7 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.db_config import get_session
 from src.models.guest_model import GuestModel
 
@@ -51,8 +52,8 @@ class GuestRepository:
 
   async def delete_guest(self, guest_id):
     try:
-      user_to_delete = await self.session.get(GuestModel, guest_id)
-      await self.session.delete(user_to_delete)
+      guest_to_delete = await self.session.get(GuestModel, guest_id)
+      await self.session.delete(guest_to_delete)
       await self.session.commit()
 
     except SQLAlchemyError:

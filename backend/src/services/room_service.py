@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.models.room_model import RoomModel
 from src.repositories.room_repository import RoomRepository
-from src.utils.exceptions import NotFoundError
+from src.utils.exceptions import RoomNotFoundError
 logger = logging.getLogger(__name__)
 
 class RoomService:
@@ -27,7 +27,7 @@ class RoomService:
     rooms = await self.repository.get_rooms(limit, offset)
 
     if not rooms:
-      raise NotFoundError()
+      raise RoomNotFoundError()
 
     return rooms
 
@@ -37,7 +37,7 @@ class RoomService:
     db_room = await self.repository.get_by_id(room_id)
 
     if not db_room:
-      raise NotFoundError()
+      raise RoomNotFoundError()
 
     db_room.room_number = schema.room_number
     db_room.daily_price = schema.daily_price
@@ -52,6 +52,6 @@ class RoomService:
     db_room = await self.repository.get_by_id(room_id)
 
     if not db_room:
-      raise NotFoundError()
+      raise RoomNotFoundError()
 
     return await self.repository.delete_room(room_id)

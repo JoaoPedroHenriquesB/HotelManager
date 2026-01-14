@@ -1,5 +1,7 @@
-from src.database.db_config import Base
 from sqlalchemy.orm import Mapped, mapped_column
+
+from src.database.db_config import Base
+
 
 class GuestModel(Base):
   __tablename__ = "guests"
