@@ -10,7 +10,7 @@ from src.services.guest_service import GuestService
 from src.utils.misc import FilterPage
 from src.utils.token import requires_admin
 
-guest_router = APIRouter(prefix="/guest", tags=["Guests"])
+guest_router = APIRouter(prefix="/guest", tags=["Guests"], dependencies=[Depends(requires_admin)])
 
 # INJECTIONS
 T_Session = Annotated[AsyncSession, Depends(get_session)]
@@ -24,25 +24,25 @@ T_Admin = Annotated[UserModel, Depends(requires_admin)]
 
 # ========= CREATE ROUTER =========
 @guest_router.post("/", response_model=GuestPublic, status_code=201)
-async def create_guest(service: T_Service, schema: GuestSchema, admin: T_Admin) -> GuestModel:
+async def create_guest(service: T_Service, schema: GuestSchema) -> GuestModel:
     return await service.create_guest(schema)
 
 
 # ========= READ ROUTER =========
 @guest_router.get("/", response_model=GuestList)
-async def list_guests(service: T_Service, filter_page: T_FilterPage, admin: T_Admin) -> dict:
+async def list_guests(service: T_Service, filter_page: T_FilterPage) -> dict:
     guests = await service.list_guests(filter_page.limit, filter_page.offset)
     return {"guests": guests}
 
 
 # ========= UPDATE ROUTER =========
 @guest_router.patch("/{guest_id}")
-async def update_guest(service: T_Service, guest_id: int, schema: GuestSchema, admin: T_Admin):
+async def update_guest(service: T_Service, guest_id: int, schema: GuestSchema):
     return await service.update_guest(schema, guest_id)
 
 
 # ========= DELETE ROUTER =========
 @guest_router.delete("/{guest_id}")
-async def delete_guest(service: T_Service, guest_id: int, admin: T_Admin):
+async def delete_guest(service: T_Service, guest_id: int):
     await service.delete_guest(guest_id)
     return None

@@ -11,7 +11,7 @@ from src.schemas.room_schema import RoomInternal, RoomList, RoomSchema
 from src.services.room_service import RoomService
 from src.utils.misc import FilterPage
 
-room_router = APIRouter(prefix="/room", tags=["Rooms"])
+room_router = APIRouter(prefix="/room", tags=["Rooms"], dependencies=[Depends(requires_admin)])
 
 # INJECTIONS
 T_Session = Annotated[AsyncSession, Depends(get_session)]
@@ -25,13 +25,13 @@ T_Admin = Annotated[UserModel, Depends(requires_admin)]
 
 # ========= CREATE ROUTER =========
 @room_router.post("/", response_model=RoomInternal, status_code=201)
-async def create_room(service: T_Service, schema: RoomSchema, admin: T_Admin) -> RoomModel:
+async def create_room(service: T_Service, schema: RoomSchema) -> RoomModel:
     return await service.create_room(schema)
 
 
 # ========= READ ROUTER =========
 @room_router.get("/", response_model=RoomList)
-async def list_rooms(service: T_Service, filter_page: T_FilterPage, admin: T_Admin) -> dict:
+async def list_rooms(service: T_Service, filter_page: T_FilterPage) -> dict:
     rooms = await service.list_rooms(filter_page.limit, filter_page.offset)
     return {"rooms": rooms}
 
@@ -39,12 +39,12 @@ async def list_rooms(service: T_Service, filter_page: T_FilterPage, admin: T_Adm
 # ========= UPDATE ROUTER =========
 @room_router.patch("/{room_id}")
 async def update_room(
-    service: T_Service, room_id: int, schema: RoomSchema, admin: T_Admin) -> RoomModel:
+    service: T_Service, room_id: int, schema: RoomSchema) -> RoomModel:
     return await service.update_room(schema, room_id)
 
 
 # ========= DELETE ROUTER =========
 @room_router.delete("/{room_id}")
-async def delete_room(service: T_Service, room_id: int, admin: T_Admin):
+async def delete_room(service: T_Service, room_id: int):
     await service.delete_room(room_id)
     return None
