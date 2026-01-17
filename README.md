@@ -39,7 +39,7 @@ Follow these steps to get the project running locally. Assume you have **Python 
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/HotelManager.git
+    git clone https://github.com/your-username/HotelManager.git](https://github.com/JoaoPedroHenriquesB/HotelManager.git
     cd HotelManager
     ```
 
