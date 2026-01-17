@@ -26,11 +26,15 @@ The project was built using **Python and FastAPI**. The key libraries and tools 
 
 ## Images
 
-![API Documentation Swagger UI](https://via.placeholder.com/800x400?text=Swagger+UI+Documentation)
-*Interactive API documentation provided by FastAPI.*
+![bookings router](imgs/bookings.png)
 
-![Database Schema Diagram](https://via.placeholder.com/800x400?text=Database+Schema+Diagram)
-*Entity Relationship Diagram of the Hotel Management System.*
+![guests router](imgs/guests.png)
+
+![rooms router](imgs/rooms.png)
+
+![users router](imgs/users.png)
+
+![auth router](imgs/auth.png)
 
 ## Installation and Setup
 
@@ -39,24 +43,24 @@ Follow these steps to get the project running locally. Assume you have **Python 
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/HotelManager.git](https://github.com/JoaoPedroHenriquesB/HotelManager.git
+    git clone https://github.com/JoaoPedroHenriquesB/HotelManager.git](https://github.com/JoaoPedroHenriquesB/HotelManager.git
     cd HotelManager
     ```
 
-2. **Create and activate a virtual environment:**
+2. **Create and activate a virtual environment using `uv`:**
 
     ```bash
-    python -m venv venv
+    uv venv
     # On Windows:
-    venv\Scripts\activate
+    .venv\Scripts\activate
     # On macOS/Linux:
-    source venv/bin/activate
+    source .venv/bin/activate
     ```
 
 3. **Install dependencies:**
 
     ```bash
-    pip install -r requirements.txt
+    uv sync
     ```
 
 4. **Apply database migrations:**
@@ -67,6 +71,4 @@ Follow these steps to get the project running locally. Assume you have **Python 
 
 5. **Run the application:**
 
-    ```bash
-    uvicorn src.main:app --reload
-    ```
+    Execute the "main.py" file in the project's root directory to start the API.
