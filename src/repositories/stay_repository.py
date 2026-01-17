@@ -4,6 +4,7 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.db_config import get_session
 from src.models.stay_model import StayModel, StayStatus
 

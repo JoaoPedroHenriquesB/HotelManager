@@ -10,7 +10,7 @@ from src.services.stay_service import StayService
 from src.utils.misc import FilterPage
 from src.utils.token import requires_admin
 
-stay_router = APIRouter(prefix="/stay", tags=["Stays"], dependencies=[Depends(requires_admin)])
+stay_router = APIRouter(dependencies=[Depends(requires_admin)])
 
 # INJECTIONS
 T_Session = Annotated[AsyncSession, Depends(get_session)]
