@@ -25,12 +25,30 @@ T_Admin = Annotated[UserModel, Depends(requires_admin)]
 # ========= CREATE GUEST =========
 @guest_router.post("/", response_model=GuestPublic, status_code=201)
 async def create_guest(service: T_Service, schema: GuestSchema) -> GuestModel:
+    """Creates a new guest.
+
+    Args:
+        service (GuestService): The guest service business logic.
+        schema (GuestSchema): The guest data to create.
+
+    Returns:
+        GuestModel: The created guest record.
+    """
     return await service.create_guest(schema)
 
 
 # ========= GET GUEST =========
 @guest_router.get("/", response_model=GuestList)
 async def list_guests(service: T_Service, filter_page: T_FilterPage) -> dict:
+    """Lists all guests with pagination.
+
+    Args:
+        service (GuestService): The guest service business logic.
+        filter_page (FilterPage): Pagination parameters (limit, offset).
+
+    Returns:
+        dict: A dictionary containing a list of guests.
+    """
     guests = await service.list_guests(filter_page.limit, filter_page.offset)
     return {"guests": guests}
 
@@ -38,11 +56,30 @@ async def list_guests(service: T_Service, filter_page: T_FilterPage) -> dict:
 # ========= UPDATE GUEST =========
 @guest_router.patch("/{guest_id}")
 async def update_guest(service: T_Service, guest_id: int, schema: GuestSchema):
+    """Updates an existing guest.
+
+    Args:
+        service (GuestService): The guest service business logic.
+        guest_id (int): The ID of the guest to update.
+        schema (GuestSchema): The guest data to update.
+
+    Returns:
+        GuestModel: The updated guest record.
+    """
     return await service.update_guest(schema, guest_id)
 
 
 # ========= DELETE GUEST =========
 @guest_router.delete("/{guest_id}")
 async def delete_guest(service: T_Service, guest_id: int):
+    """Deletes a guest.
+
+    Args:
+        service (GuestService): The guest service business logic.
+        guest_id (int): The ID of the guest to delete.
+
+    Returns:
+        None
+    """
     await service.delete_guest(guest_id)
     return None

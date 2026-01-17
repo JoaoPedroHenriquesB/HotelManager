@@ -2,10 +2,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.db_config import get_session
 from src.models.stay_model import StayModel
 from src.models.user_model import UserModel
-from src.schemas.stay_schema import StayCheckout, StayInternal, StayList, StaySchema
+from src.schemas.stay_schema import (StayCheckout, StayInternal, StayList,
+                                     StaySchema)
 from src.services.stay_service import StayService
 from src.utils.misc import FilterPage
 from src.utils.token import requires_admin
@@ -25,18 +27,45 @@ T_Admin = Annotated[UserModel, Depends(requires_admin)]
 # ========= CHECK-IN ROUTER =========
 @stay_router.post("/check_in", response_model=StayInternal, status_code=201)
 async def check_in(service: T_Service, schema: StaySchema) -> StayModel:
+  """Registers a new guest check-in.
+
+  Args:
+      service (StayService): The stay service business logic.
+      schema (StaySchema): The stay data to create.
+
+  Returns:
+      StayModel: The created stay record.
+  """
   return await service.check_in(schema)
 
 
 # ========= CHECK-OUT ROUTER =========
 @stay_router.get("/check_out", response_model=StayCheckout)
 async def check_out(service: T_Service, guest_id: int) -> StayModel:
+  """Registers a guest check-out.
+
+  Args:
+      service (StayService): The stay service business logic.
+      guest_id (int): The ID of the guest checking out.
+
+  Returns:
+      StayModel: The updated stay record with checkout details.
+  """
   return await service.check_out(guest_id)
 
 
 # ========= ACTIVE STAYS ROUTER =========
 @stay_router.get("/actives", response_model=StayList)
 async def active_stays(service: T_Service, filter_page: T_FilterPage)-> dict:
+  """Lists all currently active stays.
+
+  Args:
+      service (StayService): The stay service business logic.
+      filter_page (FilterPage): Pagination parameters (limit, offset).
+
+  Returns:
+      dict: A dictionary containing a list of active stays.
+  """
   stays = await service.actives_stays(filter_page.limit, filter_page.offset)
   return {"stays": stays}
 
@@ -44,5 +73,14 @@ async def active_stays(service: T_Service, filter_page: T_FilterPage)-> dict:
 # ========= ALL STAYS ROUTER =========
 @stay_router.get("/list", response_model=StayList)
 async def list_stays(service: T_Service, filter_page: T_FilterPage)-> dict:
+  """Lists all stays (history).
+
+  Args:
+      service (StayService): The stay service business logic.
+      filter_page (FilterPage): Pagination parameters (limit, offset).
+
+  Returns:
+      dict: A dictionary containing a list of all stays.
+  """
   stays = await service.list_all(filter_page.limit, filter_page.offset)
   return {"stays": stays}

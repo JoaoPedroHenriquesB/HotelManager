@@ -21,6 +21,18 @@ T_CurrentUser = Annotated[UserModel, Depends(get_current_user)]
 # ========= LOGIN ROUTER =========
 @auth_router.post("/login")
 async def login_token(session: T_Session, form_data: OAuth2):
+    """Authenticates a user and returns an access token.
+
+    Args:
+        session (AsyncSession): The database session.
+        form_data (OAuth2PasswordRequestForm): The login form data containing username and password.
+
+    Returns:
+        dict: A dictionary containing the access token and token type.
+
+    Raises:
+        CouldNotValidateCredentialsError: If the user does not exist or the password is incorrect.
+    """
     user = await session.scalar(select(UserModel).where(UserModel.email == form_data.username))
 
     if not user:
@@ -36,5 +48,13 @@ async def login_token(session: T_Session, form_data: OAuth2):
 # ========= REFRESH TOKEN ROUTER =========
 @auth_router.post("/refresh_token")
 async def refresh_token(user: T_CurrentUser):
+    """Refreshes the access token for the current authenticated user.
+
+    Args:
+        user (UserModel): The current authenticated user.
+
+    Returns:
+        dict: A dictionary containing the new access token and token type.
+    """
     new_token = create_access_token({"sub": user.email, "is_admin": user.is_admin})
     return {"access_token": new_token, "token_type": "Bearer"}
