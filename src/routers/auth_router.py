@@ -20,7 +20,7 @@ T_CurrentUser = Annotated[UserModel, Depends(get_current_user)]
 
 # ========= LOGIN ROUTER =========
 @auth_router.post("/login")
-async def login_token(session: T_Session, form_data: OAuth2):
+async def login_token(session: T_Session, form_data: OAuth2) -> dict[str, str]:
     """Authenticates a user and returns an access token.
 
     Args:
@@ -47,7 +47,7 @@ async def login_token(session: T_Session, form_data: OAuth2):
 
 # ========= REFRESH TOKEN ROUTER =========
 @auth_router.post("/refresh_token")
-async def refresh_token(user: T_CurrentUser):
+async def refresh_token(user: T_CurrentUser) -> dict[str, str]:
     """Refreshes the access token for the current authenticated user.
 
     Args:

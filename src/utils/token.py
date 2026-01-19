@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from fastapi import Depends
@@ -10,24 +11,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.config.config import configs
 from src.database.db_config import get_session
 from src.models.user_model import UserModel
-from src.utils.exceptions import (
-    CouldNotValidateCredentialsError,
-    NotAdminError,
-    TokenDecodeError,
-    TokenExpiredSignatureError,
-)
+from src.utils.exceptions import (CouldNotValidateCredentialsError,
+                                  NotAdminError, TokenDecodeError,
+                                  TokenExpiredSignatureError)
 
-SECRET_KEY = configs.SECRET_KEY
-TOKEN_EXPIRE = configs.TOKEN_EXPIRE
-ALGORITHM = configs.ALGORITHM
+SECRET_KEY: str = configs.SECRET_KEY
+TOKEN_EXPIRE: int = configs.TOKEN_EXPIRE
+ALGORITHM: str = configs.ALGORITHM
+
 
 def create_access_token(data: dict) -> str:
-    to_encode = data.copy()
-    expire = datetime.now(tz=ZoneInfo("UTC")) + timedelta(minutes=TOKEN_EXPIRE)
+    to_encode: dict[Any, Any] = data.copy()
+    expire: datetime = datetime.now(tz=ZoneInfo("UTC")) + timedelta(minutes=TOKEN_EXPIRE)
     to_encode.update({"exp": expire})
 
-    encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt: str = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login", refreshUrl="auth/token/refresh")
 
@@ -35,7 +35,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login", refreshUrl="auth/tok
 async def get_current_user(session: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)):
 
     try:
-        payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload: Any = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
 
         if not email:
@@ -47,7 +47,7 @@ async def get_current_user(session: AsyncSession = Depends(get_session), token: 
     except ExpiredSignatureError:
         raise TokenExpiredSignatureError()
 
-    user = await session.scalar(select(UserModel).where(UserModel.email == email))
+    user: UserModel | None = await session.scalar(select(UserModel).where(UserModel.email == email))
     if not user:
         raise CouldNotValidateCredentialsError()
 

@@ -1,63 +1,105 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, Dict, Sequence
+
 from src.models.user_model import UserModel
 from src.repositories.user_repository import UserRepository
+from src.schemas.user_schema import UserSchema
 from src.utils.exceptions import DuplicateEntityError, NotFoundError
 from src.utils.hash import hash_password
 
 
 class UserService():
-    def __init__(self, session: AsyncSession) -> None:
-        self.repository = UserRepository(session)
+    def __init__(self, repository: UserRepository) -> None:
+        self.repository: UserRepository = repository
 
 
-    #create new user
-    async def create_user(self, schema):
-        existing_user = await self.repository.verify_data(schema.email)
+    # --- CREATE ---
+    async def create(self, schema: UserSchema) -> UserModel:
+        """
+        encrypts the password and persists a new user in the database.
+        checks if the email is already registered before creating the new user.
+        hashes the password using the security utility function.
 
+        args:
+            schema: Object containing the creation data (email, password, etc.).
+
+        returns:
+            UserModel: The newly created user object with ID and timestamp.
+
+        raises:
+            DuplicateEntityError: If the provided email already exists in the system.
+        """
+        existing_user: UserModel | None = await self.repository.get_by_email(email=schema.email)
         if existing_user:
-            if existing_user.email == schema.email:
-                raise DuplicateEntityError("email", "email already exists in database")
+            raise DuplicateEntityError(field="email", message="email already exists in database")
 
-        new_user = UserModel(
-            name=schema.name,
-            password=hash_password(schema.password),
-            email=schema.email,
-            is_admin=schema.is_admin
-        )
+        user_data: Dict[str, Any] = schema.model_dump()
+        user_data["password"] = hash_password(password=user_data["password"])
 
-        return await self.repository.create_user(new_user)
+        new_user = UserModel(**user_data)
+        return await self.repository.create_user(user_model=new_user)
 
 
-    #read user
-    async def list_users(self, limit: int, offset: int):
-        users = await self.repository.get_users(limit, offset)
+    # --- READ ---
+    async def list(self, limit: int, offset: int) -> Sequence[UserModel]:
+        """
+        retrieves a list of users with pagination.
 
-        if not users:
-            raise NotFoundError()
+        args:
+            limit: Maximum number of users to return.
+            offset: Number of users to skip before starting to collect the result set.
 
+        returns:
+            Sequence[UserModel]: A list of user objects.
+        """
+        users: Sequence[UserModel] = await self.repository.list(limit=limit, offset=offset)
         return users
 
 
-    #update user
-    async def update_user(self, schema, user_id: int):
-        db_user = await self.repository.get_by_id(user_id)
+    # --- UPDATE ---
+    async def update(self, schema: UserSchema, user_id: int) -> UserModel:
+        """
+        updates an existing user's information.
+        only the fields provided in the schema (set fields) will be updated.
+        if a new password is provided, it will be automatically hashed.
 
+        args:
+            schema: Object containing the fields to be updated.
+            user_id: Unique identifier of the user to update.
+
+        returns:
+            UserModel: The updated user object.
+
+        raises:
+            NotFoundError: If no user is found with the provided ID.
+        """
+        db_user: UserModel | None = await self.repository.get_by_id(user_id=user_id)
         if not db_user:
             raise NotFoundError()
 
-        db_user.name = schema.name
-        db_user.password = hash_password(schema.password)
-        db_user.email = schema.email
-        db_user.is_admin = schema.is_admin
+        update_data: Dict[str, Any] = schema.model_dump(exclude_unset=True)
 
-        return await self.repository.update_user(db_user)
+        if "password" in update_data:
+            update_data["password"] = hash_password(password=update_data["password"])
+
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+
+        return await self.repository.update_user(user_model=db_user)
 
 
-    #delete user
-    async def delete_user(self, user_id: int):
-        db_user = await self.repository.get_by_id(user_id)
+    # --- DELETE ---
+    async def delete(self, user_id: int) -> None:
+        """
+        Deletes a user from the database.
 
+        Args:
+            user_id: ID of the user to be deleted.
+
+        Raises:
+            NotFoundError: If the user does not exist.
+        """
+        db_user: UserModel | None = await self.repository.get_by_id(user_id=user_id)
         if not db_user:
             raise NotFoundError()
 
-        return await self.repository.delete_user(user_id)
+        await self.repository.delete_user(user_model=db_user)
