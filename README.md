@@ -4,6 +4,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.128+-green.svg)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0+-red.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 A robust, asynchronous hotel management API built with clean architecture principles. This system provides comprehensive booking, guest, room, and user management with JWT authentication and enterprise-grade error handling.
 ## Architectural Overview
 The project follows **layered architecture** with clear separation of concerns:
