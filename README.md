@@ -45,20 +45,24 @@ src/
 # Clone the repository
 git clone https://github.com/JoaoPedroHenriquesB/HotelManager.git
 cd HotelManager
+
 # Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate     # Windows
+uv venv
+
+# Windows
+.venv\Scripts\activate
+
+# Linux / MacOS
+source.venv/bin/activate
+
 # Install dependencies
-pip install -e .
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your database URL and JWT secrets
-# Run database migrations
+uv sync
+
+# Apply database migrations
 alembic upgrade head
-# Start the development server
-python main.py
+
+# Run application
+uv run main.py
 ```
 The API will be available at `http://localhost:8000`
 ## API Documentation
